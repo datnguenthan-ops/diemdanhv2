@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sự Kiện - Xác Nhận Có Mặt</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --bg: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* Background elements */
+        .blob {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            filter: blur(80px);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.2;
+            animation: move 20s infinite alternate;
+        }
+
+        @keyframes move {
+            from {
+                transform: translate(-50%, -50%);
+            }
+
+            to {
+                transform: translate(50%, 50%);
+            }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+            perspective: 1000px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: 0.5s;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .logo-ring {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+            font-size: 32px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-bottom: 32px;
+        }
+
+        /* Form elements */
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+            position: relative;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            margin-left: 4px;
+        }
+
+        input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 16px 20px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            background: rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        }
+
+        .pin-container {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .pin-box {
+            width: 55px;
+            height: 55px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            padding: 0;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 14px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 20px -3px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Suggestions */
+        .suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #1e293b;
+            border-radius: 14px;
+            margin-top: 10px;
+            max-height: 240px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            display: none;
+            border: 1px solid var(--glass-border);
+        }
+
+        .sgn-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .sgn-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .sgn-item strong {
+            display: block;
+            font-size: 15px;
+            margin-bottom: 2px;
+        }
+
+        .sgn-item small {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        /* Success screen */
+        .success-wrapper {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            animation: zoomIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .icon-check {
+            width: 80px;
+            height: 80px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin-bottom: 24px;
+            box-shadow: 0 0 40px rgba(16, 185, 129, 0.4);
+        }
+
+        .seat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 24px 0;
+            width: 100%;
+        }
+
+        .seat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .seat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-light);
+        }
+
+        /* Mini Map */
+        .map-box {
+            margin-top: 10px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+        }
+
+        .map-stage {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .map-grid {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .map-block {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .map-row {
+            display: flex;
+            gap: 3px;
+        }
+
+        .map-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .map-dot.active {
+            background: var(--primary);
+            transform: scale(1.8);
+            box-shadow: 0 0 15px var(--primary);
+            z-index: 2;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .btn-reload {
+            margin-top: 20px;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 14px;
+            text-decoration: underline;
+            border: none;
+            cursor: pointer;
+        }
+
+        #loading-text {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 15px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="blob" style="top: 10%; right: 10%;"></div>
+    <div class="blob" style="bottom: 10%; left: 10%; background: var(--secondary);"></div>
+
+    <div class="container">
+        <!-- STEP 0: ACCESS PIN -->
+        <div class="card" id="step-pin">
+            <div class="logo-ring">🔐</div>
+            <h1>Mã Sự Kiện</h1>
+            <p class="subtitle">Vui lòng nhập mã truy cập để tiếp tục</p>
+
+            <div class="pin-container" id="pin-inputs">
+                <input type="password" class="pin-box" maxlength="1" inputmode="numeric" onkeyup="moveFocus(this, 1)">
+                <input type="password" class="pin-box" maxlength="1" inputmode="numeric" onkeyup="moveFocus(this, 2)">
+                <input type="password" class="pin-box" maxlength="1" inputmode="numeric" onkeyup="moveFocus(this, 3)">
+                <input type="password" class="pin-box" maxlength="1" inputmode="numeric" onkeyup="moveFocus(this, 4)">
+            </div>
+
+            <button class="btn btn-primary" onclick="verifyPin()" id="btn-verify">Truy Cập Hệ Thống</button>
+        </div>
+
+        <!-- STEP 1: SEARCH -->
+        <div class="card" id="step-search" style="display: none;">
+            <div class="logo-ring">👋</div>
+            <h1>Xin Chào!</h1>
+            <p class="subtitle">Nhập chính xác họ tên của bạn để điểm danh</p>
+
+            <div class="input-group">
+                <label class="input-label">Họ và Tên / Đơn vị</label>
+                <input type="text" id="query" placeholder="Ví dụ: Nguyễn Văn A..." oninput="searchDebounced()"
+                    autocomplete="off">
+                <div class="suggestions" id="suggestions"></div>
+            </div>
+
+            <div id="loading-text">🔍 Đang tìm kiếm...</div>
+
+            <!-- Confirmation sub-box -->
+            <div id="confirm-box" style="display: none; margin-top: 30px; animation: slideIn 0.3s;">
+                <div
+                    style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 16px; padding: 20px; margin-bottom: 20px;">
+                    <h3 id="target-name" style="font-size: 18px; margin-bottom: 4px;"></h3>
+                    <p id="target-unit" style="color: var(--text-muted); font-size: 14px;"></p>
+                </div>
+                <button class="btn btn-primary" onclick="confirmCheckin()" id="btn-checkin">⚡️ Xác Nhận Có Mặt</button>
+            </div>
+        </div>
+
+        <!-- STEP 2: SUCCESS -->
+        <div class="card success-wrapper" id="step-success">
+            <div class="icon-check">✓</div>
+            <h1 style="color: #10b981;">Thành Công!</h1>
+            <p class="subtitle" id="welcome-msg"></p>
+
+            <div class="seat-card">
+                <div class="seat-label">Vị trí chỗ ngồi của bạn:</div>
+                <div class="seat-value" id="seat-location"></div>
+
+                <div class="map-box">
+                    <div class="map-stage">— SÂN KHẤU —</div>
+                    <div class="map-grid" id="mini-map"></div>
+                </div>
+            </div>
+
+            <p style="font-size: 13px; color: var(--text-muted);">Hệ thống đã ghi nhận lúc <span id="check-time"></span>
+            </p>
+            <button class="btn-reload" onclick="location.reload()">Khách tiếp theo</button>
+        </div>
+    </div>
+
+    <script>
+        // Cấu hình SCRIPT_URL
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzjLd6_qr-mCZhccLJglu9lNAkAXb-VMwQuHfgM4PNQJcUVwQQ6R0j7svColnuBBqmn/exec';
+
+        let currentPin = '';
+        let selectedGuest = null;
+        let searchTimer = null;
+
+        // PIN logic
+        function moveFocus(el, idx) {
+            if (el.value.length === 1 && idx < 4) {
+                document.querySelectorAll('.pin-box')[idx].focus();
+            }
+        }
+
+        function verifyPin() {
+            const inputs = document.querySelectorAll('.pin-box');
+            currentPin = Array.from(inputs).map(i => i.value).join('');
+
+            if (currentPin.length < 4) return;
+
+            // Chuyển sang màn tìm kiếm (Bản chất PIN check nằm ở Server)
+            document.getElementById('step-pin').style.display = 'none';
+            document.getElementById('step-search').style.display = 'block';
+            document.getElementById('query').focus();
+        }
+
+        // Search logic (Server-side)
+        function searchDebounced() {
+            clearTimeout(searchTimer);
+            const q = document.getElementById('query').value.trim();
+            const sugg = document.getElementById('suggestions');
+            const loaders = document.getElementById('loading-text');
+
+            if (q.length < 2) {
+                sugg.style.display = 'none';
+                return;
+            }
+
+            searchTimer = setTimeout(async () => {
+                loaders.style.display = 'block';
+                try {
+                    const url = `${SCRIPT_URL}?mode=search&pin=${currentPin}&q=${encodeURIComponent(q)}`;
+                    const res = await fetch(url);
+                    const json = await res.json();
+
+                    if (json.status === 'success') {
+                        renderSuggestions(json.data);
+                    } else {
+                        alert(json.message || 'Lỗi truy cập');
+                        if (json.message.includes('PIN')) location.reload();
+                    }
+                } catch (e) {
+                    console.error(e);
+                } finally {
+                    loaders.style.display = 'none';
+                }
+            }, 600);
+        }
+
+        function renderSuggestions(data) {
+            const sugg = document.getElementById('suggestions');
+            sugg.innerHTML = '';
+
+            if (data.length === 0) {
+                sugg.innerHTML = '<div style="padding:16px; color:var(--text-muted)">Không tìm thấy kết quả khớp</div>';
+            } else {
+                data.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'sgn-item';
+                    div.innerHTML = `<strong>${item['Họ và tên']}</strong><small>${item['Đơn vị'] || ''}</small>`;
+                    div.onclick = () => selectItem(item);
+                    sugg.appendChild(div);
+                });
+            }
+            sugg.style.display = 'block';
+        }
+
+        function selectItem(item) {
+            selectedGuest = item;
+            document.getElementById('query').value = item['Họ và tên'];
+            document.getElementById('suggestions').style.display = 'none';
+
+            document.getElementById('target-name').innerText = item['Họ và tên'];
+            document.getElementById('target-unit').innerText = item['Đơn vị'] || 'Khách mời';
+            document.getElementById('confirm-box').style.display = 'block';
+        }
+
+        // Checkin logic
+        async function confirmCheckin() {
+            if (!selectedGuest) return;
+            const btn = document.getElementById('btn-checkin');
+            btn.disabled = true;
+            btn.innerText = 'Đang xử lý...';
+
+            const time = new Date().toLocaleTimeString('vi-VN');
+
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({
+                        action: 'checkin',
+                        uid: selectedGuest['UID'],
+                        time: time
+                    })
+                });
+
+                // Show Success
+                document.getElementById('step-search').style.display = 'none';
+                document.getElementById('welcome-msg').innerText = `Chào mừng ${selectedGuest['Họ và tên']}`;
+                document.getElementById('seat-location').innerText = `Dãy ${selectedGuest['Dãy']} — Cột ${selectedGuest['Cột']} — Hàng ${selectedGuest['Hàng']}`;
+                document.getElementById('check-time').innerText = time;
+
+                renderMiniMap(selectedGuest['Dãy'], selectedGuest['Cột'], selectedGuest['Hàng']);
+                document.getElementById('step-success').style.display = 'flex';
+
+            } catch (e) {
+                alert('Có lỗi xảy ra, vui lòng thử lại');
+                btn.disabled = false;
+                btn.innerText = '⚡️ Xác Nhận Có Mặt';
+            }
+        }
+
+        function renderMiniMap(block, col, row) {
+            const container = document.getElementById('mini-map');
+            container.innerHTML = '';
+
+            ['Trái', 'Phải'].forEach(bName => {
+                const bDiv = document.createElement('div');
+                bDiv.className = 'map-block';
+                for (let r = 1; r <= 10; r++) {
+                    const rDiv = document.createElement('div');
+                    rDiv.className = 'map-row';
+                    for (let c = 1; c <= 3; c++) {
+                        const s = document.createElement('div');
+                        s.className = 'map-dot';
+                        if (block === bName && r === parseInt(row) && c === parseInt(col)) {
+                            s.classList.add('active');
+                        }
+                        rDiv.appendChild(s);
+                    }
+                    bDiv.appendChild(rDiv);
+                }
+                container.appendChild(bDiv);
+            });
+        }
+    </script>
+</body>
+
+</html>
